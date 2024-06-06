@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Calculator</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #e7d1d1; 
+        }
+        .container {
+            margin-top: 100px;
+        }
+        #cal{
+            padding: 20px 100px 60px;
+        }
+        #detail{
+            height: 414px;
+        }
+        #detail1{
+            border: 2px solid #ffffff;
+            height: 280px;
+        }
+        .box {
+            border: 1px solid #ff0000; 
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #cda1a1; 
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .box-header {
+            background-color: #d91111; 
+            color: #fff; 
+            padding: 10px 20px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        #addItem {
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding:15px;
+            background-color: #a72828; 
+            color: #fff; 
+            border-color: #a72828; 
+        }
+        .btn:hover {
+            background-color: #dd1313; 
+            border-color: #7e1e1e; 
+        }
+        #remove{
+            margin-top: 33px;
+            height: 20px;
+            width: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="cal"  class="container-fluid ">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="box">
+                    <div class="box-header text-center">
+                        <h2>Bill Calculator</h2>
+                    </div>
+                    <form id="billForm">
+                        <div id="items">
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="itemName">Item Name:</label>
+                                    <input type="text" class="form-control itemName" required>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="price">Price per item:</label>
+                                    <input type="number" class="form-control price" min="0.01" step="0.01" value="0.00" required>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="quantity">Quantity:</label>
+                                    <input type="number" class="form-control quantity" min="1" value="1" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addItem" class="btn btn-block">Add Item</button>
+                        <button type="submit" class="btn btn-block">Calculate Total</button>
+                        <button type="button" id="resetForm" class="btn btn-block">Reset</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6" container-fluid>
+                <div id="detail"  class="box">
+                    <div class="box-header text-center">
+                        <h2>Bill Details</h2>
+                    </div>
+                    <div id="detail1" class="box">
+                    <div id="billDetails"></div>
+                    <div id="itemList"></div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('addItem').addEventListener('click', function() {
+            var items = document.getElementById('items');
+            var newItem = document.createElement('div');
+            newItem.classList.add('form-row');
+            newItem.innerHTML = `
+                <div class="form-group col-md-4">
+                    <label for="itemName">Item Name:</label>
+                    <input type="text" class="form-control itemName" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="price">Price per item:</label>
+                    <input type="number" class="form-control price" min="0.01" step="0.01" value="0.00" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" class="form-control quantity" min="1" value="1" required>
+                </div>
+                <div class="form-group col-md-1">
+                    <button id="remove" class="btn btn-danger removeItem text-center ">cancel</button>
+                </div>
+            `;
+            items.appendChild(newItem);
+        });
+    
+        document.getElementById('resetForm').addEventListener('click', function() {
+            document.getElementById('billForm').reset();
+            document.getElementById('billDetails').innerHTML = '';
+            document.getElementById('itemList').innerHTML = '';
+        });
+    
+        document.getElementById('billForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+    
+            var itemList = document.getElementById('items').getElementsByClassName('form-row');
+            var total = 0;
+            var itemListHTML = '';
+    
+            for (var i = 0; i < itemList.length; i++) {
+                var itemName = itemList[i].getElementsByClassName('itemName')[0].value;
+                var price = parseFloat(itemList[i].getElementsByClassName('price')[0].value);
+                var quantity = parseInt(itemList[i].getElementsByClassName('quantity')[0].value);
+    
+                if (!isNaN(price) && !isNaN(quantity)) {
+                    var itemTotal = price * quantity;
+                    total += itemTotal;
+                    itemListHTML += `<p>${itemName}: Rs.${itemTotal.toFixed(2)}</p>`;
+                }
+            }
+    
+            document.getElementById('billDetails').innerHTML = `<h4>Total: Rs.${total.toFixed(2)}</h4>`;
+            document.getElementById('itemList').innerHTML = itemListHTML;
+        });
+    
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('removeItem')) {
+                event.target.closest('.form-row').remove();
+            }
+        });
+    </script>    
+</body>
+</html>
